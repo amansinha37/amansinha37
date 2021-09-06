@@ -1,0 +1,31 @@
+# Getting time series data 
+
+# Getting wekipedia trend 
+library(wikipediatrend)
+data <- wp_trend(  page = "Tom_Brady",
+           from = "2013-01-01",
+           to="2015-12-31")
+#plot
+library(ggplot2)
+qplot(date,View,data=data)
+summary(data)
+data$views[data$views==0] <- NA
+ds <- data$date
+y <- log(data$views)
+df <- data.frame(ds,y)
+qplot (ds, y , data = df)
+
+#install package prophet 
+library(prophet)
+m <- prophet(df)
+
+#prediction
+
+future<-make_future_dataframe(m,periods = 365)
+tail(future)
+forecast <- predict(m,future)
+tail(forecast)
+
+#plot function
+plot(m,forecast)
+prophet_plot_components(m,forecast)
