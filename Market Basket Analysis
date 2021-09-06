@@ -1,0 +1,36 @@
+#Read the data
+mydata<-read.csv(file.choose(),
+                 header = T,
+                 colClasses ="factor")
+str(mydata)
+
+#finding association rule
+library(arules)
+rules <-apriori(mydata)
+
+#rules with specified parameter value
+rules <- apriori(mydata,
+                 parameter = list(minlen = 2,
+                                  maxlen=10,
+                                  sup=.7,
+                                  conf=.8))
+
+inspect(rules)
+summary(mydata)
+#findings intresting rules -1
+rules <- apriori(mydata,
+                parameter = list(minlen=2,
+                                 maxlen=3,
+                                 supp=.01,
+                                 conf=.7),
+                appearance = list(rhs=c("Foundation=Yes"),
+                                  lhs=c("Bag=Yes","Blush=Yes"),
+                                  default="lhs"))
+                             
+inspect(rules)                               
+
+
+#graph 
+library(arulesViz)
+plot(rules)                              
+plot(rules,method="grouprd")
