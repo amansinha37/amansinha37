@@ -1,0 +1,41 @@
+#1  Open data file
+
+data1 = read.csv(file.choose())
+attach(data1)
+names(data1)
+
+# Build glm model
+glm1 = glm(Attrition ~  Yrs_Exp + Work_Challenging + Work_Envir + Compensation, 
+           data = data1, family = binomial())
+summary(glm1)
+
+# check p values < 0.05
+# variables p value > 0.05, to be dropped
+glm2 = glm(Attrition ~  Work_Challenging + Work_Envir + Compensation + Tech_Exper, 
+           data = data1, family = binomial())
+summary(glm2)
+
+# ln(p/1-p) = -0.62 -3.46 * Work_ChallengingYes + 4.52 * Work Env Low + 2.7 * Comp Low 
+# - 3.8 * Tech Exp Low
+
+# (p/1-p) = e^-(0.6886 + -3.0208 * Work_ChallengingYes + 3.42 * Work Env Low + 1.52 * Comp Low
+# - 3.8 * Tech Exp Low)
+
+predict1 = predict(glm2, newdata = data1, type = 'response')
+df1 = data.frame(predict1)
+
+write.csv(df1,"d://predict1.csv")
+
+# build second model
+
+# Psedo R-Square (63%)
+
+Rsquare = 1 - glm2$deviance / glm2$null.deviance
+
+# Predict1 = predict(model, newdata = data1, type='response')
+# data with predicted proabability values
+# write.csv(predict1, path)
+
+# Multicollinearity check
+vif(glm2)
+
